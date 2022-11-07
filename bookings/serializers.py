@@ -5,28 +5,35 @@ from .models import Booking, Contact, Tour, TourRegistry, Traveler, TravelerRegi
 class ContactSerializer(serializers.ModelSerializer):
     class Meta:
         model = Contact
-        fields = ('id', 'docId', 'name', 'phone', 'email',)
-
-class BookingSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Booking
-        fields = ('id', 'price', 'outstanding', 'bookingDate', 'state', 'contactId')
+        fields = '__all__'
 
 class TravelerSerializer(serializers.ModelSerializer):
     class Meta:
         model = Traveler
-        fields = ('id', 'docId', 'fNames', 'lNames', 'country', 'birth')
+        fields = '__all__'
 
 class TourSerializer(serializers.ModelSerializer):
     class Meta:
         model = Tour
-        fields = ('id', 'tour', 'price')
+        fields = '__all__'
 
 class TravelerRegistrySerializer(serializers.ModelSerializer):
     class Meta:
         model = TravelerRegistry
-        fields = ('id', 'bookingId', 'travelerId')
+        fields = '__all__'
+
 class TourRegistrySerializer(serializers.ModelSerializer):
+    tour = serializers.CharField(source='tourId.tour')
+    price = serializers.FloatField(source='tourId.price')
     class Meta:
         model = TourRegistry
-        fields = ('id', 'bookingId', 'tourId')
+        fields = ['id', 'bookingId', 'tourId', 'tour', 'price']
+
+class BookingSerializer(serializers.ModelSerializer):
+    tours = TourRegistrySerializer(many=True, read_only=True)
+    clientName = serializers.CharField(source='contactId.name')
+    email = serializers.CharField(source='contactId.email')
+    phone = serializers.CharField(source='contactId.phone')
+    class Meta:
+      model = Booking
+      fields = ('id', 'state', 'contactId', 'departDate', 'clientName', 'email', 'phone', 'tours')
