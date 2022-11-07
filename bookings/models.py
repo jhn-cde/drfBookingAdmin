@@ -23,6 +23,7 @@ class Booking(models.Model):
     contactId = models.ForeignKey(Contact, on_delete=models.CASCADE)
     state = models.CharField(max_length=20,choices=STATES)
     bookingDate = models.DateField(default=django.utils.timezone.now)
+    departDate = models.DateField(default=django.utils.timezone.now)
     price = models.FloatField(default=0)
     outstanding = models.FloatField(default=0)
 
@@ -43,8 +44,8 @@ class Tour(models.Model):
     price = models.FloatField(default=0)
 
 class TourRegistry(models.Model):
-    bookingId = models.ForeignKey(Booking, on_delete=models.CASCADE)
-    tourId = models.ForeignKey(Tour, on_delete=models.DO_NOTHING)
+    bookingId = models.ForeignKey(Booking, related_name='tours', on_delete=models.CASCADE)
+    tourId = models.ForeignKey(Tour, related_name='tourdata', on_delete=models.DO_NOTHING)
 
 
     
